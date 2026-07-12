@@ -46,6 +46,10 @@ Single-user, runs entirely on localhost, no auth, no cloud.
 - Validate all user input at the FastAPI route level using Pydantic schemas.
 - Gemini API key loaded from `.env` as `GEMINI_API_KEY` via `python-dotenv` — never hardcoded.
 - Design tokens (colors, fonts, spacing) defined once in `tokens.css` — never inline.
+- Unit tests: test individual functions in isolation (e.g. parsing logic in `scanner.py`).
+- Integration tests: test full request → database flow via FastAPI's `TestClient`.
+- Both live in `backend/tests/` — prefix integration tests with `integration_` 
+  (e.g. `integration_test_receipts.py`).
 
 ## Do NOT
 
@@ -66,6 +70,14 @@ Single-user, runs entirely on localhost, no auth, no cloud.
 - If less than 80% confident, ask. Do not invent or assume.
 - Every new feature starts with `spec/features/NNN-name/` containing 
   `spec.md`, `plan.md`, and `tasks.md` before any code is written.
+- For every new function or endpoint, write unit tests in `backend/tests/` 
+  before marking the task as done. Write them yourself, if assistance needed, ask for human input.
+- Test file naming: `test_<module>.py` (e.g. `test_scanner.py` for `scanner.py`).
+- Each test function name must describe the scenario: 
+  `test_health_endpoint_returns_ok`, not `test_health`.
+- Cover at minimum: happy path, missing input, and invalid input for every endpoint.
+- Run `pytest` after every backend change and show me the output 
+  before continuing.
 - Always use Conventional Commits format: `type(scope): description` 
   (e.g. `feat(scanner): add receipt upload endpoint`).
 - Never push to GitHub automatically — stage and summarize changes, 
