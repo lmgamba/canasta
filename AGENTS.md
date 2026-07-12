@@ -66,7 +66,12 @@ Single-user, runs entirely on localhost, no auth, no cloud.
 - If less than 80% confident, ask. Do not invent or assume.
 - Every new feature starts with `spec/features/NNN-name/` containing 
   `spec.md`, `plan.md`, and `tasks.md` before any code is written.
-- Follow the Git workflow: feature branch → PR → develop. Never commit to main directly.
+- Always use Conventional Commits format: `type(scope): description` 
+  (e.g. `feat(scanner): add receipt upload endpoint`).
+- Never push to GitHub automatically — stage and summarize changes, 
+  then wait for explicit approval before any `git push`.
+- Never commit directly to `main` or `develop` — always work on a 
+  feature branch and wait for PR approval.
 
 ## Documentation
 

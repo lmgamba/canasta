@@ -45,6 +45,7 @@
 - Error responses always return `{"detail": "<message>"}` to match FastAPI defaults.
 - Never commit `.env` or `~/.canasta/` contents to git.
 - Gemini API key loaded from `.env` as `GEMINI_API_KEY` via `python-dotenv` — never hardcoded.
+- Commit messages follow Conventional Commits: `type(scope): description`.  Valid types: `feat`, `fix`, `chore`, `refactor`, `docs`, `test`.
 
 ## Visual Style
 
