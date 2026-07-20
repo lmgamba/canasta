@@ -1,12 +1,12 @@
 # 001 · Project Setup — Tasks
 
-- [ ] Create root folder structure: `backend/`, `frontend/`, `spec/`.
-- [ ] Initialize Python virtual environment: `python -m venv .venv` inside `backend/`.
-- [ ] Create `requirements.txt` with: fastapi, uvicorn, sqlalchemy,  google-generativeai, 
+- [x] Create root folder structure: `backend/`, `frontend/`, `spec/`.
+- [x] Initialize Python virtual environment: `.venv` lives at project root by design (not inside `backend/`).
+- [x] Create `requirements.txt` with: fastapi, uvicorn, sqlalchemy, google-generativeai, 
       python-dotenv, pytest, pillow.
-- [ ] Create `backend/database.py` — SQLAlchemy engine, session factory, 
+- [x] Create `backend/database.py` — SQLAlchemy engine, session factory, 
       auto-create `~/.canasta/` directory on startup.
-- [ ] Create `backend/models.py` — `Receipt` and `Item` models with all fields 
+- [x] Create `backend/models.py` — `Receipt` and `Item` models with all fields 
       defined in `tech-stack.md`.
 - [ ] Create `backend/schemas.py` — Pydantic schemas mirroring the models.
 - [ ] Create `backend/main.py` — FastAPI app, CORS middleware, 
