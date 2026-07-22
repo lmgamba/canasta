@@ -35,7 +35,7 @@ class Receipt(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
 
     # The date printed on the receipt (not when it was scanned)
-    date: Mapped[date] = mapped_column(Date)
+    receipt_date: Mapped[date] = mapped_column("date", Date)
 
     # Name of the store where the receipt was issued
     store_name: Mapped[str] = mapped_column(String)
