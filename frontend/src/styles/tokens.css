@@ -1,0 +1,27 @@
+/*
+ * Canasta Design Tokens
+ * All visual values defined here — never use inline styles or hardcoded colors elsewhere.
+ */
+
+:root {
+  /* ── Backgrounds ─────────────────────────────────────────── */
+  --bg-deepest: #121212;
+  --bg-surface: #1E1E1E;
+  --bg-hover: #2A2A2A;
+
+  /* ── Text ────────────────────────────────────────────────── */
+  --text-primary: #F5F5F5;
+  --text-secondary: #9E9E9E;
+
+  /* ── Accent ──────────────────────────────────────────────── */
+  --accent: #00E676;
+  --accent-dim: #00E67620;
+
+  /* ── Borders & Radii ─────────────────────────────────────── */
+  --radius: 12px;
+  --glow-hover: 0 0 0 1px #00E67620;
+
+  /* ── Fonts ───────────────────────────────────────────────── */
+  --font-mono: "JetBrains Mono", monospace;
+  --font-sans: "Inter", sans-serif;
+}
