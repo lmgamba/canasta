@@ -2,17 +2,16 @@
 
 ## Done ✅
 
-_Nothing yet — project just started._
-
-## Current 🔜
-
 1. **001 · Project Setup** — initialize repo, folder structure, backend skeleton, 
    frontend skeleton, database connection, and AGENTS.md.
 
+## Current 🔜
+
+2. **002 · Receipt Scanner** — upload a receipt image, send to Google Gemini 2.5 Flash (Vision), 
+   extract and save items to the database.
+
 ## Backlog 💡
 
-2. **002 · Receipt Scanner** — upload a receipt image, send to GPT-4o Vision, 
-   extract and save items to the database.
 3. **003 · Receipt History** — list all scanned receipts with date, store name, 
    total, and item count.
 4. **004 · Consumption Dashboard** — charts and stats showing spending by category, 

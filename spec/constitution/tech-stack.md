@@ -7,7 +7,7 @@
 - **Backend framework:** FastAPI
 - **Frontend framework:** React 18 + Vite
 - **Database:** SQLite via SQLAlchemy (file stored at `~/.canasta/canasta.db`)
-- **LLM:** Google Gemini 2.0 Flash (Vision) via google-generativeai SDK
+- **LLM:** Google Gemini 2.5 Flash (Vision) via google-generativeai SDK
 - **Tests:** pytest (backend) — frontend has no test suite in v1
 - **Deployment:** local only — user runs via `uvicorn` and opens `localhost:8000`
 
@@ -16,7 +16,7 @@
 - `backend/main.py` — FastAPI app entry point, all route definitions
 - `backend/database.py` — SQLAlchemy setup and session management
 - `backend/models.py` — SQLAlchemy ORM models (Receipt, Item)
-- `backend/scanner.py` — GPT-4o Vision integration, receipt parsing logic
+- `backend/scanner.py` — Google Gemini 2.5 Flash (Vision) integration, receipt parsing logic
 - `backend/schemas.py` — Pydantic schemas for request/response validation
 - `frontend/src/pages/` — one file per page (Upload, Dashboard, History)
 - `frontend/src/components/` — reusable UI components
@@ -34,7 +34,7 @@
 
 - `Receipt` — represents one scanned receipt: date, store name, total amount, image path.
 - `Item` — represents one line on a receipt: name, quantity, unit price, total price, category. Belongs to a Receipt.
-- `category` — one of: Dairy, Produce, Meat & Fish, Bakery, Snacks, Beverages, Cleaning, Personal Care, Other. Assigned by GPT-4o.
+- `category` — one of: Dairy, Produce, Meat & Fish, Bakery, Snacks, Beverages, Cleaning, Personal Care, Other. Assigned by Gemini.
 
 ## Conventions
 
@@ -43,6 +43,8 @@
 - All API routes prefixed with `/api/`.
 - FastAPI routes live in `main.py` for v1 — split into routers only if file exceeds 200 lines.
 - Error responses always return `{"detail": "<message>"}` to match FastAPI defaults.
+- Error handling: FastAPI HTTPException for all API errors. 
+  No print() statements — use raise HTTPException with a clear detail message.
 - Never commit `.env` or `~/.canasta/` contents to git.
 - Gemini API key loaded from `.env` as `GEMINI_API_KEY` via `python-dotenv` — never hardcoded.
 - Commit messages follow Conventional Commits: `type(scope): description`.  Valid types: `feat`, `fix`, `chore`, `refactor`, `docs`, `test`.
@@ -63,4 +65,4 @@
 - Never commit `canasta.db` or any `.env` file to git.
 - No user authentication in v1 — single user app by design.
 - Do not add dependencies without updating `requirements.txt` or `package.json`.
-- Gemini 2.0 Flash is the only LLM provider in v1 — no abstraction layer needed yet.
+- Gemini 2.5 Flash is the only LLM provider in v1 — no abstraction layer needed yet.

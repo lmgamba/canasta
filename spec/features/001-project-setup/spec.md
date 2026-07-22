@@ -1,6 +1,6 @@
 # 001 · Project Setup
 
-**Status:** in progress
+**Status:** done
 
 ## What it does
 
