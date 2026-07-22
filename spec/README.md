@@ -19,7 +19,6 @@ spec/
         └── tasks.md         ← checklist de tareas
 ```
 
-_La constitución puede ser un único archivo si el proyecto es pequeño; cada feature también puede ser un único archivo. Divídelo cuando crezca._
 
 ## Flujo para una feature nueva
 
