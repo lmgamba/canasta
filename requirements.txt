@@ -1,7 +1,8 @@
 fastapi
+python-multipart
 uvicorn
 sqlalchemy
-google-generativeai
+google-genai
 python-dotenv
 pytest
 httpx
