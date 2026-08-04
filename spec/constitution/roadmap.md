@@ -4,16 +4,16 @@
 
 1. **001 · Project Setup** — initialize repo, folder structure, backend skeleton, 
    frontend skeleton, database connection, and AGENTS.md.
+2. **002 · Receipt Scanner** — upload a receipt image, send to Google Gemini 3.6 Flash (Vision), 
+   extract and save items to the database.
 
 ## Current 🔜
 
-2. **002 · Receipt Scanner** — upload a receipt image, send to Google Gemini 2.5 Flash (Vision), 
-   extract and save items to the database.
+3. **003 · Receipt History** — list all scanned receipts with date, store name, 
+   total, and item count.
 
 ## Backlog 💡
 
-3. **003 · Receipt History** — list all scanned receipts with date, store name, 
-   total, and item count.
 4. **004 · Consumption Dashboard** — charts and stats showing spending by category, 
    most purchased items, and weekly/monthly trends.
 5. **005 · Item Detail View** — click any item to see its full purchase history 
