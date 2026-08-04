@@ -97,8 +97,8 @@ def test_scan_receipt_returns_422_when_gemini_fails():
 
 
 def test_scan_receipt_returns_400_for_oversized_file():
-    """File too large — exceeds 10 MB limit."""
-    large_image = b"\xff\xd8\xff" + b"\x00" * (10 * 1024 * 1024 + 1)
+    """File too large — exceeds 5 MB limit."""
+    large_image = b"\xff\xd8\xff" + b"\x00" * (5 * 1024 * 1024 + 1)
     response = client.post(
         "/api/receipts/scan",
         files={"file": ("receipt.jpg", large_image, "image/jpeg")},

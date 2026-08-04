@@ -7,7 +7,7 @@
 - [x] Add category mapping in `scanner.py` — map Gemini output to 
       valid Category enum values, default to `Other` if unrecognized.
 - [x] Add `POST /api/receipts/scan` route in `backend/main.py` — 
-      accept `UploadFile`, validate image type and size (max 10MB).
+      accept `UploadFile`, validate image type and size (max 5MB).
 - [x] Connect route to `scanner.scan_receipt()` and persist 
       Receipt + Items in a single db transaction.
 - [x] Return `ReceiptRead` schema with nested items on success.
