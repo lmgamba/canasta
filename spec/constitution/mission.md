@@ -4,7 +4,7 @@
 
 Canasta is a local-first grocery intelligence app that scans supermarket receipts and reveals your real consumption patterns over time.
 
-1. **Receipt Scanner** — uploads a receipt photo and uses Google Gemini 2.5 Flash (Vision) to extract every item, price, quantity, and category automatically.
+1. **Receipt Scanner** — uploads a receipt photo and uses Google Gemini 3.6 Flash (Vision) to extract every item, price, quantity, and category automatically.
 2. **Consumption Dashboard** — shows how much of each product you buy per week/month, which categories dominate your spending, and which items you buy most frequently.
 3. **Receipt History** — a chronological log of all scanned receipts with totals and item breakdowns.
 

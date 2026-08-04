@@ -7,7 +7,7 @@
 - **Backend framework:** FastAPI
 - **Frontend framework:** React 18 + Vite
 - **Database:** SQLite via SQLAlchemy (file stored at `~/.canasta/canasta.db`)
-- **LLM:** Google Gemini 2.5 Flash (Vision) via google-generativeai SDK
+- **LLM:** Google Gemini 3.6 Flash (Vision) via google-genai SDK
 - **Tests:** pytest (backend) — frontend has no test suite in v1
 - **Deployment:** local only — user runs via `uvicorn` and opens `localhost:8000`
 
@@ -16,7 +16,7 @@
 - `backend/main.py` — FastAPI app entry point, all route definitions
 - `backend/database.py` — SQLAlchemy setup and session management
 - `backend/models.py` — SQLAlchemy ORM models (Receipt, Item)
-- `backend/scanner.py` — Google Gemini 2.5 Flash (Vision) integration, receipt parsing logic
+- `backend/scanner.py` — Google Gemini 3.6 Flash (Vision) integration, receipt parsing logic
 - `backend/schemas.py` — Pydantic schemas for request/response validation
 - `frontend/src/pages/` — one file per page (Upload, Dashboard, History)
 - `frontend/src/components/` — reusable UI components
@@ -65,4 +65,4 @@
 - Never commit `canasta.db` or any `.env` file to git.
 - No user authentication in v1 — single user app by design.
 - Do not add dependencies without updating `requirements.txt` or `package.json`.
-- Gemini 2.5 Flash is the only LLM provider in v1 — no abstraction layer needed yet.
+- Gemini 3.6 Flash is the only LLM provider in v1 — no abstraction layer needed yet.
