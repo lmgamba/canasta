@@ -47,8 +47,8 @@ VALID_IMAGE_SIGNATURES = {
     b"\x89PNG": "image/png",
 }
 
-# Maximum upload size: 10 MB
-MAX_FILE_SIZE = 10 * 1024 * 1024
+# Maximum upload size: 5 MB
+MAX_FILE_SIZE = 5 * 1024 * 1024
 
 
 def _detect_image_type(first_bytes: bytes) -> str | None:
@@ -69,7 +69,7 @@ async def scan_receipt_endpoint(file: UploadFile):
     if len(content) > MAX_FILE_SIZE:
         raise HTTPException(
             status_code=400,
-            detail="Image file is too large. Maximum size is 10 MB.",
+            detail="Image file is too large. Maximum size is 5 MB.",
         )
 
     # Validate the actual file content using magic bytes,
