@@ -1,6 +1,6 @@
 # 002 · Receipt Scanner
 
-**Status:** proposed
+**Status:** done
 
 ## What it does
 

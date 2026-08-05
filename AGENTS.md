@@ -1,7 +1,7 @@
 # Canasta
 
 Canasta is a local-first grocery intelligence app that scans supermarket receipts 
-using Google Gemini 2.5 Flash (Vision) and reveals consumption patterns over time. 
+using Google Gemini 3.6 Flash (Vision) and reveals consumption patterns over time. 
 Single-user, runs entirely on localhost, no auth, no cloud.
 
 ## Stack
@@ -11,7 +11,7 @@ Single-user, runs entirely on localhost, no auth, no cloud.
 - **Backend framework:** FastAPI
 - **Frontend framework:** React 18 + Vite
 - **Database:** SQLite via SQLAlchemy (file at `~/.canasta/canasta.db`)
-- **LLM:** Google Gemini 2.5 Flash (Vision) via google-generativeai SDK
+- **LLM:** Google Gemini 2.5 Flash (Vision) via google-genai SDK
 - **Styling:** CSS Modules (no Tailwind) — dark theme tokens in `frontend/src/styles/tokens.css`
 - **Tests:** pytest (backend only)
 
