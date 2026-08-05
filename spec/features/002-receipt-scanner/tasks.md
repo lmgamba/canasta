@@ -1,24 +1,24 @@
 # 002 · Receipt Scanner — Tasks
 
-- [ ] Create `backend/scanner.py` — Gemini client initialization, 
+- [x] Create `backend/scanner.py` — Gemini client initialization, 
       `scan_receipt(image_bytes: bytes) -> dict` function skeleton.
-- [ ] Write the Gemini prompt in `scanner.py` — structured JSON output 
+- [x] Write the Gemini prompt in `scanner.py` — structured JSON output 
       with all required fields and category instructions.
-- [ ] Add category mapping in `scanner.py` — map Gemini output to 
+- [x] Add category mapping in `scanner.py` — map Gemini output to 
       valid Category enum values, default to `Other` if unrecognized.
-- [ ] Add `POST /api/receipts/scan` route in `backend/main.py` — 
-      accept `UploadFile`, validate image type and size (max 10MB).
-- [ ] Connect route to `scanner.scan_receipt()` and persist 
+- [x] Add `POST /api/receipts/scan` route in `backend/main.py` — 
+      accept `UploadFile`, validate image type and size (max 5MB).
+- [x] Connect route to `scanner.scan_receipt()` and persist 
       Receipt + Items in a single db transaction.
-- [ ] Return `ReceiptRead` schema with nested items on success.
-- [ ] Add error handling for: invalid file type (400), Gemini parse 
+- [x] Return `ReceiptRead` schema with nested items on success.
+- [x] Add error handling for: invalid file type (400), Gemini parse 
       failure (422), unexpected errors (500) — all with user-friendly messages.
-- [ ] Write `backend/tests/test_scanner.py` — mock Gemini to test 
+- [x] Write `backend/tests/test_scanner.py` — mock Gemini to test 
       JSON parsing, category mapping, and error handling without real API calls.
-- [ ] Write `backend/tests/integration_test_scan.py` — test full endpoint 
+- [x] Write `backend/tests/integration_test_scan.py` — test full endpoint 
       with a sample receipt image, verify Receipt and Items saved to db.
-- [ ] Run all tests and verify 0 failures.
-- [ ] Validate against all acceptance criteria in `spec.md`.
-- [ ] Move feature 002 to "Done" in `../../constitution/roadmap.md`.
+- [x] Run all tests and verify 0 failures.
+- [x] Validate against all acceptance criteria in `spec.md`.
+- [x] Move feature 002 to "Done" in `../../constitution/roadmap.md`.
 
 
