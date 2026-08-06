@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, event
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
 # Directory where the SQLite database file lives
@@ -17,6 +17,16 @@ engine = create_engine(
     f"sqlite:///{DATABASE_PATH}",
     connect_args={"check_same_thread": False},
 )
+
+
+# Enable foreign key enforcement per connection. SQLite has this disabled by
+# default — without it, ON DELETE CASCADE never fires. We hook the engine's
+# connection creation event to set the pragma on every new connection.
+@event.listens_for(engine, "connect")
+def _enable_foreign_keys(dbapi_connection, _connection_record):
+    cursor = dbapi_connection.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON")
+    cursor.close()
 
 # Session factory — each request gets its own session via get_db().
 # autocommit and autoflush are explicitly disabled so we control

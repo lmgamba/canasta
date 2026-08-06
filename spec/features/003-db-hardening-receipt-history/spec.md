@@ -1,23 +1,40 @@
 # 003 · DB Hardening & Receipt History
 
-## Problem
-The database has no protection against duplicate receipts or items. A user
-re-uploading the same receipt creates duplicate entries. There is also no way
-to view or manage previously scanned receipts.
+**Status:** done
 
-## Goal
-Lock down data integrity with database constraints and UPSERT logic, and provide
-a receipt history view so users can browse and delete past scans.
+## What it does
+
+Adds database constraints to prevent duplicate receipts and items, wires up
+UPSERT logic so re-scanning the same receipt is handled gracefully, and
+provides a receipt history page where users can browse and delete past scans.
+
+## Why
+
+Without constraints, re-uploading the same receipt silently creates duplicate
+data that corrupts every metric on the dashboard. History and delete are the
+minimum needed for a user to manage their own data — especially test scans
+during development.
 
 ## Acceptance Criteria
-- Duplicate receipts (same date + store + total) return HTTP 409, not a crash.
-- Duplicate items on the same receipt combine quantities and totals (UPSERT).
-- Deleting a receipt cascades to its items (ON DELETE CASCADE).
-- History page lists all receipts with date, store name, total, and item count.
-- Users can delete a receipt from the history view.
 
-## Scope
-- `backend/models.py` — UniqueConstraints, ON DELETE CASCADE
-- `backend/main.py` — integrity error handling, UPSERT logic, DELETE endpoint
-- `backend/tests/` — integration tests for duplicates and delete
-- `frontend/src/pages/History.tsx` — receipt history list with delete
+- [ ] Scanning a receipt with the same date, store name, and total as an
+      existing receipt returns HTTP 409 with message
+      "This receipt has already been scanned."
+- [ ] Scanning a receipt where an item name already exists for that receipt
+      combines quantities and totals instead of creating a duplicate row.
+- [ ] Deleting a receipt via `DELETE /api/receipts/{id}` removes the receipt
+      and all its items. Returns 204 on success, 404 if not found.
+- [ ] `GET /api/receipts` returns all receipts ordered by date descending,
+      each with date, store name, total amount, and item count.
+- [ ] Frontend History page lists all receipts with date, store, total,
+      item count, and a delete button per receipt.
+- [ ] Deleting a receipt from the UI refreshes the list immediately.
+- [ ] `backend/seed.py` resets the database to a clean predictable state
+      in under 2 seconds.
+
+## Out of Scope
+
+- Product name normalization across receipts (feature 004).
+- Fuzzy matching of similar item names (feature 004).
+- Pagination of the history list (backlog).
+- Editing receipt data manually (backlog).
