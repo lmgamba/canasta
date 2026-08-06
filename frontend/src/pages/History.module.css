@@ -1,0 +1,96 @@
+.history {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.title {
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+}
+
+.loading,
+.empty {
+  color: var(--text-secondary);
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.error {
+  color: var(--accent);
+  margin-bottom: 1rem;
+}
+
+.list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--bg-surface);
+  border-radius: var(--radius);
+  transition: box-shadow 0.15s ease;
+}
+
+.row:hover {
+  box-shadow: var(--glow-hover);
+}
+
+.meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.date {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.store {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.stats {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.itemCount {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.total {
+  font-family: var(--font-mono);
+  color: var(--accent);
+  min-width: 5rem;
+  text-align: right;
+}
+
+.deleteButton {
+  background: transparent;
+  border: 1px solid var(--bg-hover);
+  color: var(--text-secondary);
+  padding: 0.375rem 0.75rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-family: var(--font-sans);
+  transition: all 0.15s ease;
+}
+
+.deleteButton:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}

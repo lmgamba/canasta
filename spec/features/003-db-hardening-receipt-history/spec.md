@@ -1,6 +1,6 @@
 # 003 · DB Hardening & Receipt History
 
-**Status:** proposed
+**Status:** done
 
 ## What it does
 
