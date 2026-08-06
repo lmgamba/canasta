@@ -4,11 +4,13 @@ from datetime import date
 from fastapi import FastAPI, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import select
+from sqlalchemy.dialects.sqlite import insert as sqlite_insert
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import selectinload
 
 from backend.database import Base, engine, get_db
 from backend.models import Item, Receipt
-from backend.schemas import ReceiptRead
+from backend.schemas import ReceiptRead, ReceiptSummary
 from backend.scanner import scan_receipt
 
 
@@ -107,10 +109,15 @@ async def scan_receipt_endpoint(file: UploadFile):
             total_amount=parsed["total_amount"],
         )
         db.add(receipt)
-        db.flush()  # Assign receipt.id before creating Items
+        # Assign receipt.id before creating Items. This flush is where a
+        # duplicate receipt (same date + store + total) raises IntegrityError.
+        db.flush()
 
         for item_data in parsed.get("items", []):
-            item = Item(
+            # UPSERT each item: if a row with the same (receipt_id, name)
+            # already exists, combine its quantity and total price instead of
+            # inserting a duplicate line.
+            item_stmt = sqlite_insert(Item).values(
                 name=item_data["name"],
                 quantity=item_data.get("quantity", 1.0),
                 unit_price=item_data["unit_price"],
@@ -118,7 +125,14 @@ async def scan_receipt_endpoint(file: UploadFile):
                 category=item_data["category"],
                 receipt_id=receipt.id,
             )
-            db.add(item)
+            item_stmt = item_stmt.on_conflict_do_update(
+                index_elements=["receipt_id", "name"],
+                set_={
+                    "quantity": item_stmt.excluded.quantity + Item.quantity,
+                    "total_price": item_stmt.excluded.total_price + Item.total_price,
+                },
+            )
+            db.execute(item_stmt)
 
         db.commit()
 
@@ -130,6 +144,14 @@ async def scan_receipt_endpoint(file: UploadFile):
             .options(selectinload(Receipt.items))
         )
         receipt = db.execute(stmt).scalar_one()
+    except IntegrityError:
+        # The (date, store_name, total_amount) unique constraint was violated —
+        # the user scanned a receipt that already exists.
+        db.rollback()
+        raise HTTPException(
+            status_code=409,
+            detail="This receipt has already been scanned.",
+        ) from None
     except Exception:
         db.rollback()
         raise
@@ -137,3 +159,45 @@ async def scan_receipt_endpoint(file: UploadFile):
         db.close()
 
     return receipt
+
+
+@app.get("/api/receipts", response_model=list[ReceiptSummary])
+def get_receipts():
+    """List all receipts ordered by date descending, with item counts."""
+    db = next(get_db())
+    try:
+        stmt = (
+            select(Receipt)
+            .options(selectinload(Receipt.items))
+            .order_by(Receipt.receipt_date.desc(), Receipt.id.desc())
+        )
+        receipts = db.execute(stmt).scalars().all()
+    finally:
+        db.close()
+
+    # Build the summary list, computing each receipt's item count
+    # from its eagerly-loaded items.
+    return [
+        ReceiptSummary(
+            id=r.id,
+            receipt_date=r.receipt_date,
+            store_name=r.store_name,
+            total_amount=r.total_amount,
+            item_count=len(r.items),
+        )
+        for r in receipts
+    ]
+
+
+@app.delete("/api/receipts/{receipt_id}", status_code=204)
+def delete_receipt(receipt_id: int):
+    """Delete a receipt and all its items (ON DELETE CASCADE)."""
+    db = next(get_db())
+    try:
+        receipt = db.get(Receipt, receipt_id)
+        if receipt is None:
+            raise HTTPException(status_code=404, detail="Receipt not found.")
+        db.delete(receipt)
+        db.commit()
+    finally:
+        db.close()

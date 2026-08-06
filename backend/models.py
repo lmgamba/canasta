@@ -1,7 +1,7 @@
 import enum
 from datetime import UTC, date, datetime
 
-from sqlalchemy import CheckConstraint, Date, DateTime, Enum, Float, ForeignKey, String
+from sqlalchemy import CheckConstraint, Date, DateTime, Enum, Float, ForeignKey, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from backend.database import Base
@@ -29,6 +29,10 @@ class Receipt(Base):
     __tablename__ = "receipts"
     __table_args__ = (
         CheckConstraint("total_amount >= 0", name="ck_receipt_total_amount_non_negative"),
+        UniqueConstraint(
+            "date", "store_name", "total_amount",
+            name="uq_receipt_identity",
+        ),
     )
 
     # Unique identifier for each receipt
@@ -52,8 +56,12 @@ class Receipt(Base):
         DateTime, default=lambda: datetime.now(UTC)
     )
 
-    # All items belonging to this receipt (one-to-many)
-    items: Mapped[list["Item"]] = relationship(back_populates="receipt")
+    # All items belonging to this receipt (one-to-many).
+    # passive_deletes=True defers to the DB's ON DELETE CASCADE instead of
+    # ORM nulling the FK — deleting a Receipt removes its Items.
+    items: Mapped[list["Item"]] = relationship(
+        back_populates="receipt", passive_deletes=True
+    )
 
 
 class Item(Base):
@@ -65,6 +73,7 @@ class Item(Base):
             "'Frozen Veggies','Other Frozen','Cleaning','Personal Care','Other')",
             name="ck_item_category_valid",
         ),
+        UniqueConstraint("receipt_id", "name", name="uq_item_receipt_name"),
     )
 
     # Unique identifier for each item
@@ -90,8 +99,9 @@ class Item(Base):
         Enum(Category, values_callable=lambda x: [e.value for e in x])
     )
 
-    # Foreign key linking this item back to its parent receipt
-    receipt_id: Mapped[int] = mapped_column(ForeignKey("receipts.id"))
+    # Foreign key linking this item back to its parent receipt.
+    # ON DELETE CASCADE ensures deleting a receipt removes its items.
+    receipt_id: Mapped[int] = mapped_column(ForeignKey("receipts.id", ondelete="CASCADE"))
 
     # The receipt this item belongs to (many-to-one)
     receipt: Mapped["Receipt"] = relationship(back_populates="items")

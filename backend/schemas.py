@@ -48,3 +48,16 @@ class ReceiptRead(BaseModel):
     items: list[ItemRead] = []
 
     model_config = {"from_attributes": True}
+
+
+class ReceiptSummary(BaseModel):
+    """Schema for the receipt history list — one row per receipt.
+
+    item_count is computed with an aggregate query, not stored on the row.
+    """
+
+    id: int
+    receipt_date: date
+    store_name: str
+    total_amount: float
+    item_count: int

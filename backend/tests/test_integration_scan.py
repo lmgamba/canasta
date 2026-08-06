@@ -142,3 +142,143 @@ def test_scan_receipt_persists_to_database():
     # Verify items have database IDs (persisted)
     assert data["items"][0]["id"] is not None
     assert data["items"][0]["receipt_id"] == data["id"]
+
+
+def test_scan_receipt_returns_409_for_duplicate():
+    """Scanning the same receipt twice returns 409, not a duplicate row."""
+    payload = {
+        "store_name": "Dup Store",
+        "date": "2025-03-10",
+        "total_amount": 9.99,
+        "items": [
+            {
+                "name": "Apple",
+                "quantity": 3.0,
+                "unit_price": 1.0,
+                "total_price": 3.0,
+                "category": "Fruits",
+            }
+        ],
+    }
+    with patch("backend.main.scan_receipt") as mock_scan:
+        mock_scan.return_value = payload
+        first = client.post(
+            "/api/receipts/scan",
+            files={"file": ("receipt.jpg", _make_jpeg_bytes(), "image/jpeg")},
+        )
+        second = client.post(
+            "/api/receipts/scan",
+            files={"file": ("receipt.jpg", _make_jpeg_bytes(), "image/jpeg")},
+        )
+    assert first.status_code == 200
+    assert second.status_code == 409
+    assert "already been scanned" in second.json()["detail"]
+
+
+def test_scan_receipt_upserts_duplicate_item_quantities():
+    """Scan re-adding the same item name combines its quantity and total."""
+    # Items deliberately appear on the same receipt with the same name.
+    payload = {
+        "store_name": "Upsert Store",
+        "date": "2025-04-01",
+        "total_amount": 12.0,
+        "items": [
+            {
+                "name": "Milk",
+                "quantity": 2.0,
+                "unit_price": 3.0,
+                "total_price": 6.0,
+                "category": "Dairy",
+            },
+            {
+                "name": "Milk",
+                "quantity": 2.0,
+                "unit_price": 3.0,
+                "total_price": 6.0,
+                "category": "Dairy",
+            },
+        ],
+    }
+    with patch("backend.main.scan_receipt") as mock_scan:
+        mock_scan.return_value = payload
+        response = client.post(
+            "/api/receipts/scan",
+            files={"file": ("receipt.jpg", _make_jpeg_bytes(), "image/jpeg")},
+        )
+    assert response.status_code == 200
+    data = response.json()
+    # The two identical lines collapse into one with combined quantity/total.
+    assert len(data["items"]) == 1
+    assert data["items"][0]["name"] == "Milk"
+    assert data["items"][0]["quantity"] == 4.0
+    assert data["items"][0]["total_price"] == 12.0
+
+
+def test_get_receipts_returns_list_with_item_counts():
+    """GET /api/receipts lists receipts ordered by date desc with item counts."""
+    payload = {
+        "store_name": "List Store",
+        "date": "2025-05-05",
+        "total_amount": 15.5,
+        "items": [
+            {
+                "name": "Yogurt",
+                "quantity": 2.0,
+                "unit_price": 2.0,
+                "total_price": 4.0,
+                "category": "Dairy",
+            },
+            {
+                "name": "Eggs",
+                "quantity": 1.0,
+                "unit_price": 5.5,
+                "total_price": 5.5,
+                "category": "Protein Snacks",
+            },
+        ],
+    }
+    with patch("backend.main.scan_receipt") as mock_scan:
+        mock_scan.return_value = payload
+        client.post(
+            "/api/receipts/scan",
+            files={"file": ("receipt.jpg", _make_jpeg_bytes(), "image/jpeg")},
+        )
+    response = client.get("/api/receipts")
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data) == 1
+    assert data[0]["store_name"] == "List Store"
+    assert data[0]["item_count"] == 2
+
+
+def test_delete_receipt_removes_items_and_returns_204():
+    """DELETE removes the receipt and its items; 404 if receipt missing."""
+    payload = {
+        "store_name": "Delete Store",
+        "date": "2025-07-01",
+        "total_amount": 20.0,
+        "items": [
+            {
+                "name": "Rice",
+                "quantity": 1.0,
+                "unit_price": 2.0,
+                "total_price": 2.0,
+                "category": "Carbs & Grains",
+            }
+        ],
+    }
+    with patch("backend.main.scan_receipt") as mock_scan:
+        mock_scan.return_value = payload
+        create_response = client.post(
+            "/api/receipts/scan",
+            files={"file": ("receipt.jpg", _make_jpeg_bytes(), "image/jpeg")},
+        )
+        deleted_id = create_response.json()["id"]
+
+        del_response = client.delete(f"/api/receipts/{deleted_id}")
+        assert del_response.status_code == 204
+        # Receipt no longer listed.
+        assert client.get("/api/receipts").json() == []
+
+    # Deleting a non-existent receipt returns 404.
+    assert client.delete("/api/receipts/999").status_code == 404
