@@ -6,18 +6,18 @@
    frontend skeleton, database connection, and AGENTS.md.
 2. **002 · Receipt Scanner** — upload a receipt image, send to Google Gemini 3.6 Flash (Vision), 
    extract and save items to the database.
-
-## Current 🔜
-
 3. **003 · DB Hardening & Receipt History** — Add DB constraints for duplicate receipts 
    `(date, store, total)` and items. Build history list (date, store, total, item count) 
    with delete capability (great for cleaning test scans!).
 
-## Backlog 💡
+## Current 🔜
 
 4. **004 · Product Normalization Engine** — Add name cleaning & fuzzy matching (`rapidfuzz`) 
    to map store-specific names (e.g., "PECHUGA PAVO 1954") to unified master products 
    before feeding the dashboard.
+
+## Backlog 💡
+
 5. **005 · Consumption Dashboard** — Charts using normalized product data.
 6. **006 · Item Detail View** — Click any item to see its full purchase history across 
    all receipts.
