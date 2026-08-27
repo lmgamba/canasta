@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import {
   Bar,
   BarChart,
@@ -192,7 +193,14 @@ function Dashboard() {
             <tbody>
               {topItems.map((item) => (
                 <tr key={item.normalized_name}>
-                  <td>{item.normalized_name}</td>
+                  <td>
+                    <Link
+                      className={styles.itemLink}
+                      to={`/items/detail?name=${encodeURIComponent(item.normalized_name)}`}
+                    >
+                      {item.normalized_name}
+                    </Link>
+                  </td>
                   <td>{formatPrice(item.total_spend)}</td>
                   <td>{item.purchase_count}</td>
                 </tr>
