@@ -85,3 +85,24 @@ class TopItem(BaseModel):
     normalized_name: str = Field(..., description="Normalized product name")
     total_spend: float = Field(..., description="Total amount spent on this product")
     purchase_count: int = Field(..., description="Number of line items recorded for this product")
+
+
+class ItemPurchase(BaseModel):
+    """A single purchase of a product, from one receipt."""
+
+    receipt_date: date = Field(..., description="Date printed on the receipt")
+    store_name: str = Field(..., description="Store where this purchase was made")
+    quantity: float = Field(..., description="Quantity purchased")
+    unit_price: float = Field(..., description="Price per unit")
+    total_price: float = Field(..., description="Total price for this line item")
+
+
+class ItemPurchaseHistory(BaseModel):
+    """Aggregate stats and full purchase history for a single product."""
+
+    normalized_name: str = Field(..., description="Normalized product name")
+    total_spend: float = Field(..., description="Total amount spent on this product")
+    purchase_count: int = Field(..., description="Number of purchases recorded")
+    purchases: list[ItemPurchase] = Field(
+        ..., description="Individual purchases, ordered by date descending"
+    )
