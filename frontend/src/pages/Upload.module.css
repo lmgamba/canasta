@@ -1,0 +1,215 @@
+.upload {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.title {
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.warning {
+  background: var(--accent-dim);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  color: var(--text-primary);
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  margin-bottom: 1.5rem;
+}
+
+.dropZone {
+  background: var(--bg-surface);
+  border: 2px dashed var(--bg-hover);
+  border-radius: var(--radius);
+  padding: 3rem 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.dropZone:hover,
+.dropZoneActive {
+  border-color: var(--accent);
+}
+
+.dropZoneText {
+  color: var(--text-secondary);
+}
+
+.dropZoneHint {
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  margin-top: 0.5rem;
+}
+
+.fileInput {
+  display: none;
+}
+
+.previewCard {
+  background: var(--bg-surface);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+}
+
+.previewImage {
+  max-width: 100%;
+  max-height: 320px;
+  display: block;
+  margin: 0 auto 1.5rem;
+  border-radius: var(--radius);
+}
+
+.actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.primaryButton {
+  background: var(--accent);
+  border: none;
+  color: var(--bg-deepest);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  padding: 0.625rem 1.25rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.primaryButton:hover {
+  opacity: 0.85;
+}
+
+.primaryButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.secondaryButton {
+  background: transparent;
+  border: 1px solid var(--bg-hover);
+  color: var(--text-secondary);
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  padding: 0.625rem 1.25rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.secondaryButton:hover {
+  color: var(--text-primary);
+  border-color: var(--text-primary);
+}
+
+.status {
+  color: var(--text-secondary);
+  text-align: center;
+  padding: 3rem 0;
+}
+
+.error {
+  color: var(--accent);
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.successCard {
+  background: var(--bg-surface);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+}
+
+.successHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 0.25rem;
+}
+
+.storeName {
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+  font-size: 1.25rem;
+}
+
+.total {
+  font-family: var(--font-mono);
+  color: var(--accent);
+  font-size: 1.25rem;
+}
+
+.receiptDate {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  margin-bottom: 1.25rem;
+}
+
+.itemList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.itemRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--bg-hover);
+}
+
+.itemRow:last-child {
+  border-bottom: none;
+}
+
+.itemName {
+  color: var(--text-primary);
+}
+
+.itemMeta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+}
+
+.itemCategory {
+  background: var(--bg-hover);
+  border-radius: var(--radius);
+  padding: 0.125rem 0.5rem;
+}
+
+.itemPrice {
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+  min-width: 4rem;
+  text-align: right;
+}
+
+.links {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.link {
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 0.9375rem;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
