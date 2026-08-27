@@ -82,6 +82,11 @@ class Item(Base):
     # Name of the product as it appears on the receipt
     name: Mapped[str] = mapped_column(String)
 
+    # Normalized product name for cross-store aggregation.
+    # Populated by the normalizer module during item insertion.
+    # Nullable to support existing rows without a migration.
+    normalized_name: Mapped[str | None] = mapped_column(String, nullable=True)
+
     # Quantity purchased — Float because receipts can show fractional
     # amounts (e.g. 0.5 kg of cheese, 1.2 litres of milk)
     quantity: Mapped[float] = mapped_column(Float, default=1.0)
