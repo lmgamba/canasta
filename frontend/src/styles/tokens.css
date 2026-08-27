@@ -4,22 +4,29 @@
  */
 
 :root {
-  /* ── Backgrounds ─────────────────────────────────────────── */
+  /* ── Backgrounds ───────────────────────────────────────────
   --bg-deepest: #121212;
   --bg-surface: #1E1E1E;
-  --bg-hover: #2A2A2A;
+  --bg-hover: #2A2A2A; */
+
+  --bg-deepest: #1a1a14;
+  --bg-surface: #242418;
+  --bg-hover: #2e2e22;
 
   /* ── Text ────────────────────────────────────────────────── */
-  --text-primary: #F5F5F5;
-  --text-secondary: #9E9E9E;
+  /* --text-primary: #F5F5F5;
+  --text-secondary: #9E9E9E; */
+
+  --text-primary: #f2efe4;
+  --text-secondary: #c4a35a;
 
   /* ── Accent ──────────────────────────────────────────────── */
-  --accent: #00E676;
-  --accent-dim: #00E67620;
+  --accent: #7cb95a;
+  --accent-dim: #68e60020;
 
   /* ── Borders & Radii ─────────────────────────────────────── */
   --radius: 12px;
-  --glow-hover: 0 0 0 1px #00E67620;
+  --glow-hover: 0 0 0 1px #68e60020;
 
   /* ── Fonts ───────────────────────────────────────────────── */
   --font-mono: "JetBrains Mono", monospace;

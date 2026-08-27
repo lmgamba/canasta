@@ -61,3 +61,27 @@ class ReceiptSummary(BaseModel):
     store_name: str
     total_amount: float
     item_count: int
+
+
+# ── Analytics schemas ───────────────────────────────────────────
+
+class SpendingOverTimeItem(BaseModel):
+    """One point in the spending-over-time series."""
+
+    period_label: str = Field(..., description="ISO week (YYYY-WW) or month (YYYY-MM) label")
+    total_amount: float = Field(..., description="Total amount spent in this period")
+
+
+class SpendingByCategoryItem(BaseModel):
+    """Total spend within a single category."""
+
+    category: str = Field(..., description="Item category")
+    total_amount: float = Field(..., description="Total amount spent in this category")
+
+
+class TopItem(BaseModel):
+    """One row in the most-purchased-items ranking."""
+
+    normalized_name: str = Field(..., description="Normalized product name")
+    total_spend: float = Field(..., description="Total amount spent on this product")
+    purchase_count: int = Field(..., description="Number of line items recorded for this product")
