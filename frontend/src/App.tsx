@@ -1,21 +1,23 @@
-import { useState } from 'react'
-import NavBar, { type View } from './components/NavBar'
+import { Navigate, Route, Routes } from 'react-router-dom'
+import NavBar from './components/NavBar'
 import Dashboard from './pages/Dashboard'
 import History from './pages/History'
+import ItemDetail from './pages/ItemDetail'
 import './App.css'
 
 function App() {
-  // Minimal client-side view switcher — no router dependency yet.
-  // Upload is a placeholder until its own feature is built.
-  const [view, setView] = useState<View>('history')
-
   return (
     <main>
-      <NavBar view={view} onChange={setView} />
+      <NavBar />
 
-      {view === 'history' && <History />}
-      {view === 'dashboard' && <Dashboard />}
-      {view === 'upload' && <p className="placeholder">Upload page coming soon.</p>}
+      <Routes>
+        <Route path="/" element={<Navigate to="/history" replace />} />
+        <Route path="/history" element={<History />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/items/detail" element={<ItemDetail />} />
+        {/* Upload is a placeholder until its own feature is built. */}
+        <Route path="/upload" element={<p className="placeholder">Upload page coming soon.</p>} />
+      </Routes>
     </main>
   )
 }

@@ -112,3 +112,14 @@
   font-family: var(--font-mono);
   color: var(--accent);
 }
+
+.itemLink {
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.itemLink:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}

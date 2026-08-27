@@ -1,29 +1,25 @@
+import { NavLink } from 'react-router-dom'
 import styles from './NavBar.module.css'
 
-export type View = 'upload' | 'history' | 'dashboard'
-
-interface NavBarProps {
-  view: View
-  onChange: (view: View) => void
-}
-
-const LINKS: { view: View; label: string }[] = [
-  { view: 'upload', label: 'Upload' },
-  { view: 'history', label: 'History' },
-  { view: 'dashboard', label: 'Dashboard' },
+const LINKS = [
+  { to: '/upload', label: 'Upload' },
+  { to: '/history', label: 'History' },
+  { to: '/dashboard', label: 'Dashboard' },
 ]
 
-function NavBar({ view, onChange }: NavBarProps) {
+function NavBar() {
   return (
     <nav className={styles.nav}>
       {LINKS.map((link) => (
-        <button
-          key={link.view}
-          className={view === link.view ? `${styles.navLink} ${styles.active}` : styles.navLink}
-          onClick={() => onChange(link.view)}
+        <NavLink
+          key={link.to}
+          to={link.to}
+          className={({ isActive }) =>
+            isActive ? `${styles.navLink} ${styles.active}` : styles.navLink
+          }
         >
           {link.label}
-        </button>
+        </NavLink>
       ))}
     </nav>
   )
