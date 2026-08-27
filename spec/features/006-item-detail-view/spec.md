@@ -1,6 +1,6 @@
 # 006 · Item Detail View
 
-**Status:** proposed
+**Status:** done
 
 ## What it does
 
