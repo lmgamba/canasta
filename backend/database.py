@@ -1,11 +1,14 @@
+import os
 from pathlib import Path
 
 from sqlalchemy import create_engine, event
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
-# Directory where the SQLite database file lives
-DATABASE_DIR = Path.home() / ".canasta"
-DATABASE_PATH = DATABASE_DIR / "canasta.db"
+# Path to the SQLite database file. Overridable via CANASTA_DB_PATH so the
+# test suite can point at an isolated file instead of the real dev database
+# — conftest.py sets this before any backend module is imported.
+DATABASE_PATH = Path(os.getenv("CANASTA_DB_PATH", str(Path.home() / ".canasta" / "canasta.db")))
+DATABASE_DIR = DATABASE_PATH.parent
 
 # Create the data directory (and parents) if it doesn't exist yet
 DATABASE_DIR.mkdir(parents=True, exist_ok=True)
