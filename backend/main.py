@@ -113,9 +113,13 @@ async def scan_receipt_endpoint(file: UploadFile):
         # Gemini returns dates as "YYYY-MM-DD" strings.
         receipt_date = date.fromisoformat(parsed["date"])
 
+        # Uppercase the store name so duplicate detection (UniqueConstraint
+        # on date+store_name+total_amount) isn't fooled by Gemini returning
+        # different casing for the same store across scans (e.g. "Carrefour
+        # Express" vs "CARREFOUR EXPRESS").
         receipt = Receipt(
             receipt_date=receipt_date,
-            store_name=parsed["store_name"],
+            store_name=parsed["store_name"].strip().upper(),
             total_amount=parsed["total_amount"],
         )
         db.add(receipt)
@@ -132,8 +136,10 @@ async def scan_receipt_endpoint(file: UploadFile):
         ]
 
         for item_data in parsed.get("items", []):
-            # Normalize the raw product name from Gemini.
-            raw_name = item_data["name"]
+            # Uppercase the raw name too — same reasoning as store_name,
+            # and it keeps the (receipt_id, name) UPSERT match below
+            # case-consistent for the same product on one receipt.
+            raw_name = item_data["name"].strip().upper()
             normalized = normalize_product_name(raw_name)
 
             # Check if an existing normalized name matches closely enough
@@ -145,7 +151,7 @@ async def scan_receipt_endpoint(file: UploadFile):
             # already exists, combine its quantity and total price instead of
             # inserting a duplicate line.
             item_stmt = sqlite_insert(Item).values(
-                name=item_data["name"],
+                name=raw_name,
                 normalized_name=normalized,
                 quantity=item_data.get("quantity", 1.0),
                 unit_price=item_data["unit_price"],
