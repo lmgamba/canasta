@@ -12,12 +12,13 @@
 4. **004 · Product Normalization Engine** — Add name cleaning & fuzzy matching (`rapidfuzz`) 
    to map store-specific names (e.g., "PECHUGA PAVO 1954") to unified master products 
    before feeding the dashboard.
+5. **005 · Consumption Dashboard** — Analytics endpoints (spending over time, by category, 
+   top items) and a Dashboard page with Recharts line/bar charts and a top-items table.
 
 ## Current 🔜
 
 ## Backlog 💡
 
-5. **005 · Consumption Dashboard** — Charts using normalized product data.
 6. **006 · Item Detail View** — Click any item to see its full purchase history across 
    all receipts.
 
