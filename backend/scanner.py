@@ -137,7 +137,7 @@ Rules:
 
 
 def scan_receipt(image_bytes: bytes) -> dict:
-    """Send a receipt image to Gemini 2.5 Flash and parse the response.
+    """Send a receipt image to Gemini Flash and parse the response.
 
     Args:
         image_bytes: Raw bytes of the receipt image (JPEG, PNG, etc.).
