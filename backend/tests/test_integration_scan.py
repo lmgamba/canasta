@@ -4,9 +4,9 @@ from unittest.mock import MagicMock, patch
 import pytest
 from fastapi.testclient import TestClient
 
-from backend.database import Base, engine
+from backend.database import Base, SessionLocal, engine
 from backend.main import app
-from backend.models import Category
+from backend.models import Category, Item
 
 client = TestClient(app)
 
@@ -212,6 +212,90 @@ def test_scan_receipt_upserts_duplicate_item_quantities():
     assert data["items"][0]["name"] == "Milk"
     assert data["items"][0]["quantity"] == 4.0
     assert data["items"][0]["total_price"] == 12.0
+
+
+def test_scan_receipt_persists_normalized_name():
+    """Integration — a saved item gets a cleaned normalized_name in the DB."""
+    with patch("backend.main.scan_receipt") as mock_scan:
+        mock_scan.return_value = {
+            "store_name": "Normalize Store",
+            "date": "2025-08-01",
+            "total_amount": 3.50,
+            "items": [
+                {
+                    "name": "YOPRO DRINK 300LN120",
+                    "quantity": 1.0,
+                    "unit_price": 3.50,
+                    "total_price": 3.50,
+                    "category": "Beverages",
+                }
+            ],
+        }
+        response = client.post(
+            "/api/receipts/scan",
+            files={"file": ("receipt.jpg", _make_jpeg_bytes(), "image/jpeg")},
+        )
+    assert response.status_code == 200
+    receipt_id = response.json()["id"]
+
+    db = SessionLocal()
+    try:
+        item = db.query(Item).filter(Item.receipt_id == receipt_id).one()
+        assert item.normalized_name == "yopro drink 300"
+    finally:
+        db.close()
+
+
+def test_scan_receipt_reuses_normalized_name_across_receipts():
+    """A near-duplicate item name on a later receipt merges into the
+    existing standard normalized_name instead of creating a variant."""
+    with patch("backend.main.scan_receipt") as mock_scan:
+        mock_scan.return_value = {
+            "store_name": "Store A",
+            "date": "2025-08-02",
+            "total_amount": 3.50,
+            "items": [
+                {
+                    "name": "MOZZARELLA QUESO",
+                    "quantity": 1.0,
+                    "unit_price": 3.50,
+                    "total_price": 3.50,
+                    "category": "Dairy",
+                }
+            ],
+        }
+        client.post(
+            "/api/receipts/scan",
+            files={"file": ("receipt1.jpg", _make_jpeg_bytes(), "image/jpeg")},
+        )
+
+        mock_scan.return_value = {
+            "store_name": "Store B",
+            "date": "2025-08-03",
+            "total_amount": 4.00,
+            "items": [
+                {
+                    "name": "MOZZARELLA QUESO FRESCO",
+                    "quantity": 1.0,
+                    "unit_price": 4.00,
+                    "total_price": 4.00,
+                    "category": "Dairy",
+                }
+            ],
+        }
+        response = client.post(
+            "/api/receipts/scan",
+            files={"file": ("receipt2.jpg", _make_jpeg_bytes(), "image/jpeg")},
+        )
+    receipt_id = response.json()["id"]
+
+    db = SessionLocal()
+    try:
+        item = db.query(Item).filter(Item.receipt_id == receipt_id).one()
+        # Merges into Store A's standard name, not its own "...fresco" variant.
+        assert item.normalized_name == "mozzarella queso"
+    finally:
+        db.close()
 
 
 def test_get_receipts_returns_list_with_item_counts():
