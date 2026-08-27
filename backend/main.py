@@ -13,6 +13,8 @@ from backend.database import Base, engine, get_db
 from backend.models import Item, Receipt
 from backend.normalizer import find_best_match, normalize_product_name
 from backend.schemas import (
+    ItemPurchase,
+    ItemPurchaseHistory,
     ReceiptRead,
     ReceiptSummary,
     SpendingByCategoryItem,
@@ -318,3 +320,52 @@ def get_top_items(limit: int = 10):
         )
         for row in rows
     ]
+
+
+@app.get("/api/items/purchases", response_model=ItemPurchaseHistory)
+def get_item_purchases(name: str):
+    """Full purchase history for a single product, matched by name.
+
+    Matches against COALESCE(normalized_name, name) so items scanned
+    before feature 004 (no normalized_name yet) are still searchable.
+    """
+    name_expr = func.coalesce(Item.normalized_name, Item.name)
+
+    db = next(get_db())
+    try:
+        stmt = (
+            select(
+                Receipt.receipt_date,
+                Receipt.store_name,
+                Item.quantity,
+                Item.unit_price,
+                Item.total_price,
+            )
+            .join(Receipt, Item.receipt_id == Receipt.id)
+            .where(name_expr == name)
+            .order_by(Receipt.receipt_date.desc())
+        )
+        rows = db.execute(stmt).all()
+    finally:
+        db.close()
+
+    if not rows:
+        raise HTTPException(status_code=404, detail="No purchases found for this product.")
+
+    purchases = [
+        ItemPurchase(
+            receipt_date=row.receipt_date,
+            store_name=row.store_name,
+            quantity=row.quantity,
+            unit_price=row.unit_price,
+            total_price=row.total_price,
+        )
+        for row in rows
+    ]
+
+    return ItemPurchaseHistory(
+        normalized_name=name,
+        total_spend=sum(p.total_price for p in purchases),
+        purchase_count=len(purchases),
+        purchases=purchases,
+    )

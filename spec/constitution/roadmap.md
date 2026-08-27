@@ -14,13 +14,12 @@
    before feeding the dashboard.
 5. **005 · Consumption Dashboard** — Analytics endpoints (spending over time, by category, 
    top items) and a Dashboard page with Recharts line/bar charts and a top-items table.
+6. **006 · Item Detail View** — Purchase-history endpoint and page, reachable from the 
+   Dashboard top items list. Introduced `react-router-dom` for real routing.
 
 ## Current 🔜
 
 ## Backlog 💡
-
-6. **006 · Item Detail View** — Click any item to see its full purchase history across 
-   all receipts.
 
 ## v2 Ideas 💡
 
