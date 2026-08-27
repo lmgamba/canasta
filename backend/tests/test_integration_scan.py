@@ -65,10 +65,12 @@ def test_scan_receipt_returns_200_with_valid_jpeg():
         )
     assert response.status_code == 200
     data = response.json()
-    assert data["store_name"] == "Test Store"
+    # store_name and item name are uppercased at insertion time — see
+    # test_scan_receipt_uppercases_store_and_item_names for why.
+    assert data["store_name"] == "TEST STORE"
     assert data["receipt_date"] == "2025-01-15"
     assert len(data["items"]) == 1
-    assert data["items"][0]["name"] == "Milk"
+    assert data["items"][0]["name"] == "MILK"
     assert data["items"][0]["category"] == "Dairy"
 
 
@@ -137,7 +139,7 @@ def test_scan_receipt_persists_to_database():
         )
     assert response.status_code == 200
     data = response.json()
-    assert data["store_name"] == "DB Store"
+    assert data["store_name"] == "DB STORE"
     assert len(data["items"]) == 2
     # Verify items have database IDs (persisted)
     assert data["items"][0]["id"] is not None
@@ -175,6 +177,42 @@ def test_scan_receipt_returns_409_for_duplicate():
     assert "already been scanned" in second.json()["detail"]
 
 
+def test_scan_receipt_returns_409_for_duplicate_with_different_casing():
+    """Same receipt, but Gemini returns different store-name casing on the
+    second scan (e.g. "Carrefour Express" vs "CARREFOUR EXPRESS") — still
+    caught as a duplicate, since store_name is uppercased before storing."""
+    first_payload = {
+        "store_name": "Carrefour Express",
+        "date": "2025-03-11",
+        "total_amount": 9.99,
+        "items": [
+            {
+                "name": "Apple",
+                "quantity": 3.0,
+                "unit_price": 1.0,
+                "total_price": 3.0,
+                "category": "Fruits",
+            }
+        ],
+    }
+    second_payload = {**first_payload, "store_name": "CARREFOUR EXPRESS"}
+
+    with patch("backend.main.scan_receipt") as mock_scan:
+        mock_scan.return_value = first_payload
+        first = client.post(
+            "/api/receipts/scan",
+            files={"file": ("receipt.jpg", _make_jpeg_bytes(), "image/jpeg")},
+        )
+        mock_scan.return_value = second_payload
+        second = client.post(
+            "/api/receipts/scan",
+            files={"file": ("receipt.jpg", _make_jpeg_bytes(), "image/jpeg")},
+        )
+    assert first.status_code == 200
+    assert first.json()["store_name"] == "CARREFOUR EXPRESS"
+    assert second.status_code == 409
+
+
 def test_scan_receipt_upserts_duplicate_item_quantities():
     """Scan re-adding the same item name combines its quantity and total."""
     # Items deliberately appear on the same receipt with the same name.
@@ -209,7 +247,7 @@ def test_scan_receipt_upserts_duplicate_item_quantities():
     data = response.json()
     # The two identical lines collapse into one with combined quantity/total.
     assert len(data["items"]) == 1
-    assert data["items"][0]["name"] == "Milk"
+    assert data["items"][0]["name"] == "MILK"
     assert data["items"][0]["quantity"] == 4.0
     assert data["items"][0]["total_price"] == 12.0
 
@@ -331,7 +369,7 @@ def test_get_receipts_returns_list_with_item_counts():
     assert response.status_code == 200
     data = response.json()
     assert len(data) == 1
-    assert data[0]["store_name"] == "List Store"
+    assert data[0]["store_name"] == "LIST STORE"
     assert data[0]["item_count"] == 2
 
 
