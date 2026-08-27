@@ -52,8 +52,9 @@
 - [x] `test_analytics_empty_database` — all endpoints return empty lists,
       not errors.
 - [x] Run all tests and verify 0 failures (38/38 passed).
-- [ ] Validate against all acceptance criteria in `spec.md`.
-- [ ] After all tests, ask for approval to move feature 005 to "Done" in `../../constitution/roadmap.md`.
+- [x] Validate against all acceptance criteria in `spec.md` (10/10 met,
+      confirmed by manual check of the running dashboard).
+- [x] After all tests, ask for approval to move feature 005 to "Done" in `../../constitution/roadmap.md`.
 
 ## Verification Notes
 

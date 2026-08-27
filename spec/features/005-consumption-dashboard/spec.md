@@ -1,6 +1,6 @@
 # 005 · Consumption Dashboard
 
-**Status:** proposed
+**Status:** done
 
 ## What it does
 
