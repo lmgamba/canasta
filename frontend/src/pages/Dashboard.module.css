@@ -1,0 +1,114 @@
+.dashboard {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.title {
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+  font-size: 1.5rem;
+}
+
+.status,
+.empty {
+  color: var(--text-secondary);
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.error {
+  color: var(--accent);
+}
+
+.card {
+  background: var(--bg-surface);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.cardTitle {
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.periodToggle {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.periodButton {
+  background: transparent;
+  border: 1px solid var(--bg-hover);
+  color: var(--text-secondary);
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  padding: 0.25rem 0.625rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.periodButton:hover {
+  color: var(--text-primary);
+}
+
+.periodActive {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.cardEmpty {
+  color: var(--text-secondary);
+  text-align: center;
+  padding: 2.5rem 0;
+  font-size: 0.9375rem;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th {
+  text-align: left;
+  color: var(--text-secondary);
+  font-weight: 500;
+  font-size: 0.8125rem;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--bg-hover);
+}
+
+.table td {
+  color: var(--text-primary);
+  padding: 0.625rem 0.75rem;
+  border-bottom: 1px solid var(--bg-hover);
+}
+
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+.table td:last-child,
+.table th:last-child {
+  text-align: right;
+  font-family: var(--font-mono);
+}
+
+.table td:nth-child(2),
+.table th:nth-child(2) {
+  text-align: right;
+  font-family: var(--font-mono);
+  color: var(--accent);
+}

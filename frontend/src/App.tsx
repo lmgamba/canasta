@@ -1,34 +1,21 @@
 import { useState } from 'react'
+import NavBar, { type View } from './components/NavBar'
+import Dashboard from './pages/Dashboard'
 import History from './pages/History'
 import './App.css'
 
 function App() {
   // Minimal client-side view switcher — no router dependency yet.
   // Upload is a placeholder until its own feature is built.
-  const [view, setView] = useState<'upload' | 'history'>('history')
+  const [view, setView] = useState<View>('history')
 
   return (
     <main>
-      <nav className="nav">
-        <button
-          className={view === 'upload' ? 'navLink active' : 'navLink'}
-          onClick={() => setView('upload')}
-        >
-          Upload
-        </button>
-        <button
-          className={view === 'history' ? 'navLink active' : 'navLink'}
-          onClick={() => setView('history')}
-        >
-          History
-        </button>
-      </nav>
+      <NavBar view={view} onChange={setView} />
 
-      {view === 'history' ? (
-        <History />
-      ) : (
-        <p className="placeholder">Upload page coming soon.</p>
-      )}
+      {view === 'history' && <History />}
+      {view === 'dashboard' && <Dashboard />}
+      {view === 'upload' && <p className="placeholder">Upload page coming soon.</p>}
     </main>
   )
 }
