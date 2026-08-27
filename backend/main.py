@@ -1,9 +1,10 @@
 from contextlib import asynccontextmanager
 from datetime import date
+from typing import Literal
 
 from fastapi import FastAPI, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.dialects.sqlite import insert as sqlite_insert
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import selectinload
@@ -11,7 +12,13 @@ from sqlalchemy.orm import selectinload
 from backend.database import Base, engine, get_db
 from backend.models import Item, Receipt
 from backend.normalizer import find_best_match, normalize_product_name
-from backend.schemas import ReceiptRead, ReceiptSummary
+from backend.schemas import (
+    ReceiptRead,
+    ReceiptSummary,
+    SpendingByCategoryItem,
+    SpendingOverTimeItem,
+    TopItem,
+)
 from backend.scanner import scan_receipt
 
 
@@ -225,3 +232,89 @@ def delete_receipt(receipt_id: int):
         db.commit()
     finally:
         db.close()
+
+
+@app.get("/api/analytics/spending-over-time", response_model=list[SpendingOverTimeItem])
+def get_spending_over_time(period: Literal["weekly", "monthly"] = "weekly"):
+    """Total spend per week or month, ordered by date ascending."""
+    # SQLite has no DATE_TRUNC — strftime produces a zero-padded, lexically
+    # sortable label directly (e.g. "2025-32" or "2025-08").
+    period_expr = (
+        func.strftime("%Y-%W", Receipt.receipt_date)
+        if period == "weekly"
+        else func.strftime("%Y-%m", Receipt.receipt_date)
+    )
+
+    db = next(get_db())
+    try:
+        stmt = (
+            select(
+                period_expr.label("period_label"),
+                func.sum(Receipt.total_amount).label("total_amount"),
+            )
+            .group_by(period_expr)
+            .order_by(period_expr)
+        )
+        rows = db.execute(stmt).all()
+    finally:
+        db.close()
+
+    return [
+        SpendingOverTimeItem(period_label=row.period_label, total_amount=row.total_amount)
+        for row in rows
+    ]
+
+
+@app.get("/api/analytics/spending-by-category", response_model=list[SpendingByCategoryItem])
+def get_spending_by_category():
+    """Total spend per category, ordered by spend descending."""
+    db = next(get_db())
+    try:
+        stmt = (
+            select(Item.category, func.sum(Item.total_price).label("total_amount"))
+            .group_by(Item.category)
+            .order_by(func.sum(Item.total_price).desc())
+        )
+        rows = db.execute(stmt).all()
+    finally:
+        db.close()
+
+    return [
+        SpendingByCategoryItem(category=row.category.value, total_amount=row.total_amount)
+        for row in rows
+    ]
+
+
+@app.get("/api/analytics/top-items", response_model=list[TopItem])
+def get_top_items(limit: int = 10):
+    """Most purchased items by total spend, aggregated by normalized name.
+
+    Falls back to the raw name for items saved before feature 004 added
+    normalized_name, so pre-existing rows aren't dropped from the ranking.
+    """
+    name_expr = func.coalesce(Item.normalized_name, Item.name)
+
+    db = next(get_db())
+    try:
+        stmt = (
+            select(
+                name_expr.label("normalized_name"),
+                func.sum(Item.total_price).label("total_spend"),
+                func.count(Item.id).label("purchase_count"),
+            )
+            .group_by(name_expr)
+            .order_by(func.sum(Item.total_price).desc())
+            .limit(limit)
+        )
+        rows = db.execute(stmt).all()
+    finally:
+        db.close()
+
+    return [
+        TopItem(
+            normalized_name=row.normalized_name,
+            total_spend=row.total_spend,
+            purchase_count=row.purchase_count,
+        )
+        for row in rows
+    ]
