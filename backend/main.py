@@ -10,6 +10,7 @@ from sqlalchemy.orm import selectinload
 
 from backend.database import Base, engine, get_db
 from backend.models import Item, Receipt
+from backend.normalizer import find_best_match, normalize_product_name
 from backend.schemas import ReceiptRead, ReceiptSummary
 from backend.scanner import scan_receipt
 
@@ -113,12 +114,30 @@ async def scan_receipt_endpoint(file: UploadFile):
         # duplicate receipt (same date + store + total) raises IntegrityError.
         db.flush()
 
+        # Fetch all existing normalized names so the fuzzy matcher can
+        # map new items to established standard names across receipts.
+        existing_names = [
+            row[0]
+            for row in db.execute(select(Item.normalized_name)).all()
+            if row[0] is not None
+        ]
+
         for item_data in parsed.get("items", []):
+            # Normalize the raw product name from Gemini.
+            raw_name = item_data["name"]
+            normalized = normalize_product_name(raw_name)
+
+            # Check if an existing normalized name matches closely enough
+            # to reuse the standard name instead of creating a new variant.
+            matched = find_best_match(normalized, existing_names)
+            normalized = matched if matched else normalized
+
             # UPSERT each item: if a row with the same (receipt_id, name)
             # already exists, combine its quantity and total price instead of
             # inserting a duplicate line.
             item_stmt = sqlite_insert(Item).values(
                 name=item_data["name"],
+                normalized_name=normalized,
                 quantity=item_data.get("quantity", 1.0),
                 unit_price=item_data["unit_price"],
                 total_price=item_data["total_price"],
@@ -133,6 +152,11 @@ async def scan_receipt_endpoint(file: UploadFile):
                 },
             )
             db.execute(item_stmt)
+
+            # Track the newly added normalized name so subsequent items
+            # in the same receipt can match against it.
+            if normalized not in existing_names:
+                existing_names.append(normalized)
 
         db.commit()
 

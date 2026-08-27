@@ -1,6 +1,6 @@
 # 004 · Product Normalization Engine
 
-**Status:** proposed
+**Status:** done
 
 ## What it does
 
