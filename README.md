@@ -119,3 +119,7 @@ canasta/
 - **Local-first**: all data stays on your machine in a SQLite file. No accounts, no cloud, no tracking.
 - **Receipt images are never stored**: only the extracted data is kept; the photo is discarded right after Gemini reads it.
 - **Single user by design**: no auth in v1, since this runs on your own machine for your own groceries.
+
+## License
+
+MIT, see [LICENSE](LICENSE).
