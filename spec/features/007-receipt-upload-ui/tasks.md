@@ -50,7 +50,7 @@
       (a scan takes ~30s, so 4 in a minute is unusual); the 24h/RPD one
       was at 7/20 scans when checked (no warning expected — correct) and
       will be confirmed live if it's seen misbehaving around scan 19.
-      Accepted as-is by Laura; not blocking.
+      Accepted as-is; not blocking.
 - [x] Validate against all acceptance criteria in `spec.md` — 9/11 directly
       confirmed live, 2/11 (422/500 paths, rate-limit banner) accepted on
       code review per above.
