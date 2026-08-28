@@ -8,9 +8,6 @@ __pycache__/
 *.db
 .canasta/
 
-# Dev-only seed utility
-backend/seed.py
-
 # Frontend
 frontend/node_modules/
 frontend/dist/
