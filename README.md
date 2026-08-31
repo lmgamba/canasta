@@ -4,7 +4,7 @@ A local-first grocery intelligence app. Scan a supermarket receipt and Canasta p
 
 ## Why I built this
 
-I go to the supermarket often, and I never had a clear picture of what I actually buy most, I just knew that I went too often and sometimes I ended up with too many of the same product. Canasta started from that: scan a receipt, get real data back and have a clearer view of my habits.
+I go to the supermarket often, and I never had a clear picture of what I actually buy most. Sometimes I ended up with too many of the same product but still kept going to buy more things. Canasta started from that: scan a receipt, get real data back and have a clearer view of our grocery shopping habits.
 
 ## What it does
 
